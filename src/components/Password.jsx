@@ -24,17 +24,25 @@ const Password = () => {
     setPassword(pass);
   }, [length, numberAllowed, charAllowed, setPassword]);
 
-  const copyPassword = useCallback(() => {
+  const copyPassword = useCallback(async () => {
     if (passwordRef.current) {
       passwordRef.current?.select();
-      passwordRef.current.setSelectionRange(0, length);
-      window.navigator.clipboard.writeText(password);
-      setChangeText("Copied!");
-      setTimeout(() => setChangeText("Copy"), 2000);
-      toast.success("Password copied successfully...", {
-        duration: 1000,
-        position: "bottom-center",
-      });
+      passwordRef.current?.setSelectionRange(0, length);
+      try {
+        await window.navigator.clipboard.writeText(password);
+        setChangeText("Copied!");
+        setTimeout(() => setChangeText("Copy"), 2000);
+        toast.success("Password copied successfully...", {
+          duration: 1000,
+          position: "bottom-center",
+        });
+      } catch (e) {
+        toast.error("Password didn't copied...", {
+          duration: 1000,
+          position: "bottom-center",
+        });
+        setChangeText("Copy");
+      }
     }
   }, [password, length]);
 
